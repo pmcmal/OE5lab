@@ -4,9 +4,9 @@ from mealpy.problem import Problem
 from mealpy.utils.termination import Termination
 
 # Program dzieli się na sekcje od A do E:
+
 # USTAWIENIE PARAMETRÓW
 # A - Inny sposób podawania dolnej i górnej granicy. Oto kilka przykładów:
-
 ## A1. Kiedy masz różne dolne i górne granice dla każdego parametru
 problem_dict1 = {
     "obj_func": F5,
@@ -49,15 +49,7 @@ problem_dict4 = {
     "verbose": True,
 }
 
-## URUCHOMIENIE ALGORYTMU
-### Twój parametr problem może być instancją klasy Problem lub po prostu dict jak powyżej
-model1 = HGS.OriginalHGS(problem_obj1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-model1.solve()
-model2 = HGS.OriginalHGS(problem_dict4, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-model2.solve()
-
-# B - Test z innym warunkiem zatrzymania (Zakończenie) poprzez utworzenie obiektu Zakończenie
-## Istnieją 4 przypadki zakończenia:
+## B - Istnieją 4 przypadki zakończenia:
 ### 1. FE (Liczba ocen funkcji)
 ### 2. MG (Maximum Generacji / Epok): Domyślna wartość
 ### 3. ES (Wczesne zatrzymanie): Same idea in training neural network (Jeśli najlepsze rozwiązanie globalne nie jest lepsze niż epsilon
@@ -74,36 +66,35 @@ termination_dict2 = {  # Podczas tworzenia obiektu, będzie on nadpisywał domy�
 }
 termination_dict3 = {
     "mode": "ES",
-    "quantity": 30  # po ilu epokach jeśli wynik nie ulegnie poprawy zatrzymany zostanie program
+    "quantity": 20  # po ilu epokach jeśli wynik nie ulegnie poprawy zatrzymany zostanie program
 }
 termination_dict4 = {
     "mode": "ES",
     "quantity": 60  # Czas uruchomienia (przypadek 4)
 }
-termination_obj1 = Termination(termination_dict1)
-termination_obj2 = Termination(termination_dict2)
-termination_obj3 = Termination(termination_dict3)
-termination_obj4 = Termination(termination_dict4)
+# wybór
+termination_obj1 = Termination(termination_dict3)
+
 
 ### Przekaż obiekt zakończenia do modelu jako dodatkowy parametr pod słowem kluczowym termination
-model3 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000, termination=termination_obj1)
-model3.solve()
-### Nie można przekazać obiektu termination_dict!
+# model3 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000, termination=termination_obj1)
+# model3.solve()
+### Nie można przekazać obiektu termination_dict! a jedynie termination.
 
 # C - Test z różnymi trybami szkolenia (sekwencyjny, paralelizacja wątków, paralelizacja przetwarzania)
 ## + sequential: (sekwencyjny) domyślny (jeden rdzeń)
 ## + thread: wiele wątków w zależności od używanego CPU
 ## + process: wiele rdzeni do uruchomienia algorytmu
 
-model5 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-model5.solve(mode='sequential')  # Default
+model1 = HGS.OriginalHGS(problem_dict2, epoch=100, pop_size=50, PUP=0.08, LH=10000)
+model1.solve(mode='sequential')
 
-model6 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-model6.solve(mode='thread')
-
-if __name__ == "__main__":
-    model7 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-    model7.solve(mode='process')
+# model1 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
+# model1.solve(mode='thread')
+# process w windows nalezy uzyc if __name__:
+ # if __name__ == "__main__":
+   # model1 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
+  #  model1.solve(mode='process')
 
 # D - Wykresy wszystkich dostępnych danych
 ## Istnieje 8 różnych wykresów:
@@ -122,18 +113,18 @@ if __name__ == "__main__":
 ## D.6: Wartość trajektorii (tylko 1D i 2D!)
 ##      8. Trajectory
 
-model8 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-model8.solve()
+## model8 = HGS.OriginalHGS(problem_dict1, epoch=100, pop_size=50, PUP=0.08, LH=10000)
+## model8.solve()
 
 ## Dostęp do każdego można uzyskać obiektem "history":
-model8.history.save_global_objectives_chart(filename="HGS/goc")
-model8.history.save_local_objectives_chart(filename="HGS/loc")
-model8.history.save_global_best_fitness_chart(filename="HGS/gbfc")
-model8.history.save_local_best_fitness_chart(filename="HGS/lbfc")
-model8.history.save_runtime_chart(filename="HGS/rtc")
-model8.history.save_exploration_exploitation_chart(filename="HGS/eec")
-model8.history.save_diversity_chart(filename="HGS/dc")
-model8.history.save_trajectory_chart(list_agent_idx=[3, 5], list_dimensions=[3], filename="HGS/tc")
+# model1.history.save_global_objectives_chart(filename="HGS/goc")
+# model1.history.save_local_objectives_chart(filename="HGS/loc")
+model1.history.save_global_best_fitness_chart(filename="HGS/global_best_fitness")
+# model1.history.save_local_best_fitness_chart(filename="HGS/lbfc")
+model1.history.save_runtime_chart(filename="HGS/runtime")
+model1.history.save_exploration_exploitation_chart(filename="HGS/exploration_exploitation")
+# model1.history.save_diversity_chart(filename="HGS/dc")
+# model1.history.save_trajectory_chart(list_agent_idx=[3, 5], list_dimensions=[3], filename="HGS/tc")
 
 # E - obsługa funkcji wieloobiektowej i metody ograniczeń
 ## Do obsługi wielu celów mealpy używa metody ważenia, przekształca wiele celów w jeden cel (wartość fitness)
@@ -149,23 +140,23 @@ def obj_function(solution):
 ## Zdefiniuj wagi:
 ### f1=50%,f2=20%,f3=30% -> [0.5, 0.2, 0.3] -> wartość fitness = 0.5*f1 + 0.2*f2 + 0.3*f3
 ### Domyślna waga to [1, 1, 1]
-problem_dict9 = {
+problem_dict1 = {
     "obj_func": obj_function,
     "lb": [-3, -5, 1, -10, ],
     "ub": [5, 10, 100, 30, ],
     "minmax": "min",
     "verbose": True,
-    "obj_weight": [0.5, 0.2, 0.3]  # pamiętaj o "obj_weight"
+    "obj_weight": [0.5, 0.2, 0.1]  # pamiętaj o "obj_weight"
 }
-problem_obj9 = Problem(problem_dict9)
-model9 = HGS.OriginalHGS(problem_obj9, epoch=100, pop_size=50, PUP=0.08, LH=10000)
-model9.solve()
+# problem_obj9 = Problem(problem_dict9)
+# model9 = HGS.OriginalHGS(problem_obj9, epoch=100, pop_size=50, PUP=0.08, LH=10000)
+# model9.solve()
 
 ## Aby uzyskać dostęp do wyników, można je uzyskać za pomocą metody solve()
-position, fitness_value = model9.solve()
+# position, fitness_value = model9.solve()
 
 ## Uzyskanie wartości fitness i wartości obiektywnych za pomocą atrybutu "solution"
 ## A agent / solution format [position, [fitness, [obj1, obj2, ..., obj_n]]]
-position = model9.solution[0]
-fitness_value = model9.solution[1][0]
-objective_values = model9.solution[1][1]
+# position = model9.solution[0]
+# fitness_value = model9.solution[1][0]
+# objective_values = model9.solution[1][1]
